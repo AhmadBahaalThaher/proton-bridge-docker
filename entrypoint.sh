@@ -9,6 +9,11 @@ if [[ $1 == init ]]; then
     fi
     exec protonmail-bridge --cli
 fi
+# First boot on an empty volume: create the password store the bridge needs, so it runs (without accounts) until login.
+if ! pass ls >/dev/null 2>&1; then
+    gpg --generate-key --batch /protonmail/gpgparams
+    pass init pass-key
+fi
 # The bridge only accepts connections from 127.0.0.1; socat makes container-network clients look local.
 socat TCP-LISTEN:25,fork,reuseaddr TCP:127.0.0.1:1025 &
 socat TCP-LISTEN:143,fork,reuseaddr TCP:127.0.0.1:1143 &

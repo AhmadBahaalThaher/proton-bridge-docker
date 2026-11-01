@@ -5,7 +5,7 @@
 # container again. The bridge password goes into the gateway with coolify/gateway-secret-set.sh MAIL_PASSWORD.
 set -euo pipefail
 ssh -t pm 'set -e
-C=$(docker ps -a --format "{{.Names}}" | grep -E "^proton-bridge|^'"${BRIDGE_UUID:-}"'" | head -1)
+C=$(docker ps -a --format "{{.Names}}" | grep -E "^18eslh59nikeouvo89s06ezb" | head -1)
 [ -n "$C" ] || { echo "no bridge container found"; exit 1; }
 IMG=$(docker inspect "$C" --format "{{.Config.Image}}")
 VOL=$(docker inspect "$C" --format "{{range .Mounts}}{{if eq .Destination \"/root\"}}{{.Name}}{{end}}{{end}}")
