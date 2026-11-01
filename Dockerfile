@@ -12,7 +12,8 @@ WORKDIR /protonmail
 COPY gpgparams entrypoint.sh PACKAGE /protonmail/
 COPY --from=build /protonmail.deb /tmp/protonmail.deb
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends /tmp/protonmail.deb socat pass libsecret-1-0 ca-certificates procps \
-    && rm -rf /var/lib/apt/lists/* /tmp/protonmail.deb
-HEALTHCHECK --interval=30s --timeout=5s --start-period=60s CMD bash -c 'exec 3<>/dev/tcp/127.0.0.1/143' || exit 1
+    && apt-get install -y --no-install-recommends /tmp/protonmail.deb socat pass libsecret-1-0 libfido2-1 ca-certificates procps \
+    && rm -rf /var/lib/apt/lists/* /tmp/protonmail.deb \
+    && if ldd /usr/lib/protonmail/bridge/bridge | grep -q "not found"; then ldd /usr/lib/protonmail/bridge/bridge | grep "not found"; exit 1; fi
+HEALTHCHECK --interval=30s --timeout=5s --start-period=90s CMD bash -c 'exec 3<>/dev/tcp/127.0.0.1/1143' || exit 1
 CMD ["bash", "/protonmail/entrypoint.sh"]
